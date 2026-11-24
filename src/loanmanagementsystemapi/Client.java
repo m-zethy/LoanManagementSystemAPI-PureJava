@@ -1,5 +1,8 @@
 package loanmanagementsystemapi;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -7,18 +10,27 @@ public class Client {
     
     public static void main (String[] args) {
     
-        try {
-        
-            Socket clientSocket = new Socket("localhost", 8080);
+        try (Socket clientSocket = new Socket("localhost", 8080)) {
             
-            System.out.println("Client connects successfully!");
+            System.out.println("Client successfully connected!");
             
-            System.out.println("Client local address: " + clientSocket.getLocalAddress());
-            System.out.println("Client local port: " + clientSocket.getLocalPort());
-            System.out.println();
-            System.out.println("Server address: " + clientSocket.getInetAddress());
-            System.out.println("Server port: " + clientSocket.getPort());
+            PrintWriter writer = new PrintWriter(
+                    clientSocket.getOutputStream(), true
+            );
             
+            System.out.println("Sending message...");
+            
+            writer.println("Hello Server! This is my first java netwrok message.");
+            
+            BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(
+                            clientSocket.getInputStream()
+                    )
+            );
+            
+            String message = reader.readLine();
+            
+            System.out.println("Server: " + message);
         } catch (IOException e) {
         
             e.printStackTrace();
